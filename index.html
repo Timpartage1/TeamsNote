@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Note Generator</title>
+    <style>
+        /* Styling for the professional note */
+        .professional-note {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .professional-note section {
+            margin-bottom: 20px;
+        }
+        .professional-note img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px 0;
+        }
+        .professional-note h2 {
+            font-size: 18px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+        }
+        .professional-note a {
+            display: block;
+            margin-top: 5px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+        .professional-note a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Professional Note Generator</h1>
+    <div id="note-container"></div>
+
+    <script>
+        // Function to get the Bearer token and retrieve data using the Graph API
+        async function fetchMessages() {
+            const headers = {
+                "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJub25jZSI6IlZwNTdJZVp1anlOWVlPN0N2cW15MzNIZjk3Y0xSWVVzYTBIS1prMmVOdDQiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1jN2wzSXo5M2c3dXdnTmVFbW13X1dZR1BrbyIsImtpZCI6Ik1jN2wzSXo5M2c3dXdnTmVFbW13X1dZR1BrbyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9mZmNlYTU4Yy03NjZiLTRlZWEtOTY4NC05MmNjN2NiM2M1ZTkvIiwiaWF0IjoxNzI3ODE3MzkyLCJuYmYiOjE3Mjc4MTczOTIsImV4cCI6MTcyNzkwNDA5MiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFWUUFxLzhZQUFBQTlITTJHeStCWjJWdDk3eStFMXVlM0oxazRSeVRiV1F2RmFhV095T25LaElYK1lJb0d0NzRROWxPUVpRTmNFaDdRQU5odm1DbEVMMWI0ZzBBNE5DRFNaR1EvdkJwYzFwZnd2ZXZpL1FReVdnPSIsImFtciI6WyJwd2QiLCJyc2EiLCJtZmEiXSwiYXBwX2Rpc3BsYXluYW1lIjoiR3JhcGggRXhwbG9yZXIiLCJhcHBpZCI6ImRlOGJjOGI1LWQ5ZjktNDhiMS1hOGFkLWI3NDhkYTcyNTA2NCIsImFwcGlkYWNyIjoiMCIsImRldmljZWlkIjoiMDBjZDk4ODUtM2Y1ZS00YjZmLTk4ZTEtOTQ2Mjc0NGZiMTc5IiwiZmFtaWx5X25hbWUiOiJLYXRlbmRlIiwiZ2l2ZW5fbmFtZSI6IlRpbW90aGVlIiwiaWR0eXAiOiJ1c2VyIiwiaXBhZGRyIjoiNDEuMTg2Ljg2LjIiLCJuYW1lIjoiVGltb3RoZWUgS2FtYXRlIEthdGVuZGUiLCJvaWQiOiJhYjdhZDUwOC0zNzI0LTRjNmItYjA0Yy0yYjUwMzhlZDUxOTAiLCJvbnByZW1fc2lkIjoiUy0xLTUtMjEtMjQyMTE5NTEyNy0xMDEwMjgxNDgtMTIwMTYyOTcyNi00OTY3OSIsInBsYXRmIjoiMyIsInB1aWQiOiIxMDAzMjAwMUU2OUNCMjk5IiwicmgiOiIwLkFSQUFqS1hPXzJ0MjZrNldoSkxNZkxQRjZRTUFBQUFBQUFBQXdBQUFBQUFBQUFDWEFONC4iLCJzY3AiOiJBcHBsaWNhdGlvbi5SZWFkLkFsbCBBcHBsaWNhdGlvbi5SZWFkV3JpdGUuQWxsIENhbGVuZGFycy5SZWFkV3JpdGUgQ2hhdC5SZWFkIENoYXQuUmVhZEJhc2ljIENvbnRhY3RzLlJlYWRXcml0ZSBEZXZpY2VNYW5hZ2VtZW50UkJBQy5SZWFkLkFsbCBEZXZpY2VNYW5hZ2VtZW50U2VydmljZUNvbmZpZy5SZWFkLkFsbCBEaXJlY3RvcnkuUmVhZFdyaXRlLkFsbCBGaWxlcy5SZWFkV3JpdGUuQWxsIEdyb3VwLlJlYWRXcml0ZS5BbGwgSWRlbnRpdHlSaXNrRXZlbnQuUmVhZC5BbGwgTWFpbC5SZWFkIE1haWwuUmVhZFdyaXRlIE1haWxib3hTZXR0aW5ncy5SZWFkV3JpdGUgTm90ZXMuUmVhZFdyaXRlLkFsbCBvcGVuaWQgUGVvcGxlLlJlYWQgUGxhY2UuUmVhZCBQcmVzZW5jZS5SZWFkIFByZXNlbmNlLlJlYWQuQWxsIFByaW50ZXJTaGFyZS5SZWFkQmFzaWMuQWxsIFByaW50Sm9iLkNyZWF0ZSBQcmludEpvYi5SZWFkQmFzaWMgcHJvZmlsZSBSZXBvcnRzLlJlYWQuQWxsIFNpdGVzLlJlYWRXcml0ZS5BbGwgVGFza3MuUmVhZFdyaXRlIFVzZXIuUmVhZCBVc2VyLlJlYWRCYXNpYy5BbGwgVXNlci5SZWFkV3JpdGUgVXNlci5SZWFkV3JpdGUuQWxsIGVtYWlsIiwic2lnbmluX3N0YXRlIjpbImR2Y19tbmdkIiwiZHZjX2NtcCIsImR2Y19kbWpkIiwiaW5rbm93bm50d2siLCJrbXNpIl0sInN1YiI6Il9iLU90TUc5NWFBRjBmTHcyYVZueUpmRlRVU0p4R2taaHg3ZTFzZVdxQnciLCJ0ZW5hbnRfcmVnaW9uX3Njb3BlIjoiRVUiLCJ0aWQiOiJmZmNlYTU4Yy03NjZiLTRlZWEtOTY4NC05MmNjN2NiM2M1ZTkiLCJ1bmlxdWVfbmFtZSI6InRpbW90aGVlLmthbWF0ZUB0ZWstZXhwZXJ0cy5jb20iLCJ1cG4iOiJ0aW1vdGhlZS5rYW1hdGVAdGVrLWV4cGVydHMuY29tIiwidXRpIjoiVHBnRE16T2JvME92SUd5N09UVWNBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiYjc5ZmJmNGQtM2VmOS00Njg5LTgxNDMtNzZiMTk0ZTg1NTA5Il0sInhtc19jYyI6WyJDUDEiXSwieG1zX2lkcmVsIjoiMSA4IiwieG1zX3NzbSI6IjEiLCJ4bXNfc3QiOnsic3ViIjoieEo2dkNOT1pUMnJkOThCTGVGMzQ1dnlxMW9LbFlsb3p3dVZmZ0hZQ0s1cyJ9LCJ4bXNfdGNkdCI6MTQxOTM1NDkwMCwieG1zX3RkYnIiOiJFVSJ9.mtOLlS4g_KNmI5vI1GOAdmkpdgfPrjyXF5YoS7wXqmpieoXGXj_g_Jkv-pqlOoYdLkIF6lMIxi6wvgCPqHnPVbik2I6hYs3EQNHCqWd4jfxxTiIAf_mSwGYG2LDlkxKRaT5AGrcyGDonnMOq7TDJK0SeDnta81-UK1VyT5B7tfa0SwxJgndUuR8ThMqEkN5iG6NCUcP9Eg-l1zkHIyebvnMHMtzAxZprex-XIuRT64AmkyRlxVVAFBCXNP4CKLzz1p1xBOjRX-CnBhP4oKPO-bTJ6dR5rn5lp20R7gyJ_xtUS6CHxS3AGLNiuYX-nfJqNx3R_es3BwDqNBx8PTutYA",
+                "Content-Type": "application/json"
+            };
+
+            // Example Graph API endpoint for fetching messages
+            const url = "https://graph.microsoft.com/v1.0/me/chats/48:notes/messages";
+
+            try {
+                const response = await fetch(url, { headers });
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Error fetching messages:", error);
+                return [];
+            }
+        }
+
+        // Function to generate the note structure
+        function createProfessionalNote(data) {
+            // Create a container for the professional note
+            let note = document.createElement('div');
+            note.className = 'professional-note';
+
+            // Sections for images, text, and files
+            let textSection = document.createElement('section');
+            let imageSection = document.createElement('section');
+            let fileSection = document.createElement('section');
+
+            // Add headings for each section
+            textSection.innerHTML = '<h2>Text Section</h2>';
+            imageSection.innerHTML = '<h2>Image Section</h2>';
+            fileSection.innerHTML = '<h2>File Section</h2>';
+
+            // Process each item in the data
+            data.value.forEach(item => {
+                if (item.body.contentType === 'text') {
+                    // Create a paragraph for text content
+                    let paragraph = document.createElement('p');
+                    paragraph.textContent = item.body.content;
+                    textSection.appendChild(paragraph);
+                } else if (item.body.contentType === 'html') {
+                    // Handle if the content is HTML
+                    let div = document.createElement('div');
+                    div.innerHTML = item.body.content;
+                    textSection.appendChild(div);
+                }
+                // Assuming attachments for images/files
+                if (item.attachments) {
+                    item.attachments.forEach(attachment => {
+                        if (attachment.contentType.includes("image")) {
+                            let image = document.createElement('img');
+                            image.src = 'data:image/jpeg;base64,' + attachment.contentBytes;
+                            image.alt = 'Image';
+                            imageSection.appendChild(image);
+                        } else {
+                            let fileLink = document.createElement('a');
+                            fileLink.href = 'data:application/octet-stream;base64,' + attachment.contentBytes;
+                            fileLink.textContent = attachment.name;
+                            fileLink.target = '_blank'; // Open in a new tab
+                            fileSection.appendChild(fileLink);
+                        }
+                    });
+                }
+            });
+
+            // Append all sections to the note
+            note.appendChild(textSection);
+            note.appendChild(imageSection);
+            note.appendChild(fileSection);
+
+            // Append the note to the body or any other container
+            document.getElementById('note-container').appendChild(note);
+        }
+
+        // Call the function to fetch messages and create the note
+        fetchMessages().then(data => createProfessionalNote(data));
+
+    </script>
+
+</body>
+</html>
